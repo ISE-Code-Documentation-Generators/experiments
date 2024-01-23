@@ -16,7 +16,7 @@ class Trainer:
         checkpoint_rate: "int",
         num_epochs: "int",
         proposed_model: "torch.nn.Module",
-        proposed_model_learning_specs,
+        proposed_learning_specs,
         proposed_checkpoint,  # TODO: type?
         proposed_evaluation_tester,  # TODO: type?
         baseline_model: "torch.nn.Module",
@@ -31,12 +31,12 @@ class Trainer:
         self.checkpoint_rate = checkpoint_rate
 
         self.baseline_model = baseline_model
-        self.baseline_model_learning_specs = baseline_model_learning_specs
+        self.baseline_learning_specs = baseline_model_learning_specs
         self.baseline_checkpoint = baseline_checkpoint
         self.baseline_evaluation_tester = baseline_evaluation_tester
 
         self.proposed_model = proposed_model
-        self.proposed_model_learning_specs = proposed_model_learning_specs
+        self.proposed_learning_specs = proposed_learning_specs
         self.proposed_checkpoint = proposed_checkpoint
         self.proposed_evaluation_tester = proposed_evaluation_tester
 
@@ -67,13 +67,13 @@ class Trainer:
                 src, features, md = data1
                 src, features, md = to_device(self.device, src, features, md)
                 if not baseline_stop:
-                    baseline_loss = self.baseline_model_learning_specs.train_one_batch(
+                    baseline_loss = self.baseline_learning_specs.train_one_batch(
                         (src, md, self.device),
                         md,
                     )
                     self.plotter.add_to_plot(float(baseline_loss), "loss", "baseline")
                 if not proposed_stop:
-                    proposed_loss = self.proposed_model_learning_specs.train_one_batch(
+                    proposed_loss = self.proposed_learning_specs.train_one_batch(
                         (src, features, md, self.device),
                         md,
                     )
