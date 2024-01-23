@@ -73,6 +73,7 @@ class CNN2RNNTesterOnDataset:
             mds = []
             for i in tqdm(range(len(self.dataset))):
                 src, features, md = self.dataset[i]
+                # TODO: use Collate
                 src = self.__pad_to_length(src.unsqueeze(1).to(self.device))
                 features = features.unsqueeze(0).to(self.device)
                 features = torch.einsum('be->eb', features) # shape: (features_length, batch)
