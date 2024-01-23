@@ -75,6 +75,7 @@ class CNN2RNNTesterOnDataset:
                 src, features, md = self.dataset[i]
                 src = self.__pad_to_length(src.unsqueeze(1).to(self.device))
                 features = features.unsqueeze(0).to(self.device)
+                features = torch.einsum('be->eb', features) # shape: (features_length, batch)
                 #----
                 if self.send_features:
                     model: 'CNN2RNNFeatures' = self.model
