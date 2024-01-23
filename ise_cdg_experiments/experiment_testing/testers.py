@@ -81,7 +81,7 @@ class CNN2RNNTesterOnDataset:
                     output = model.generate_one_markdown(
                         src, features,
                         self.sos_ind, self.eos_ind,
-                        sequence_max_length=25,
+                        sequence_max_length=self.source_max_length,
                         device=self.device,
                     )
                 else:
@@ -89,7 +89,7 @@ class CNN2RNNTesterOnDataset:
                     output = model.generate_one_markdown(
                         src,
                         self.sos_ind, self.eos_ind,
-                        sequence_max_length=25,
+                        sequence_max_length=self.source_max_length,
                         device=self.device,
                     )
                 #----
