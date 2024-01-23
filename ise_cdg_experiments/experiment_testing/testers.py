@@ -26,7 +26,8 @@ class CNN2RNNTesterOnDatasetBase:
             self, 
             name: str,
             model: torch.Module,
-            dataset: Md4DefDatasetInterface,
+            send_features_to_model: bool,
+            with_features_dataset: Md4DefDatasetInterface,
             md_vocab,
             source_max_length,
             sos_ind: int, eos_ind: int,
@@ -36,7 +37,8 @@ class CNN2RNNTesterOnDatasetBase:
     ) -> None:
         self.name = name
         self.model = model
-        self.dataset = dataset
+        self.send_features = send_features_to_model
+        self.dataset = with_features_dataset
         self.md_vocab = md_vocab
         self.printer = printer
         self.source_max_length = source_max_length
@@ -73,7 +75,24 @@ class CNN2RNNTesterOnDatasetBase:
                 src, features, md = self.dataset[i]
                 src = self.__pad_to_length(src.unsqueeze(1).to(self.device))
                 features = features.unsqueeze(0).to(self.device)
-                output = self.generate_one_markdown(src, features)
+                #----
+                if self.send_features:
+                    model: 'CNN2RNNFeatures' = self.model
+                    output = model.generate_one_markdown(
+                        src, features,
+                        self.sos_ind, self.eos_ind,
+                        sequence_max_length=25,
+                        device=self.device,
+                    )
+                else:
+                    model: typing.Union['CNN2RNN', 'CNN2RNNAttention'] = self.model
+                    output = model.generate_one_markdown(
+                        src,
+                        self.sos_ind, self.eos_ind,
+                        sequence_max_length=25,
+                        device=self.device,
+                    )
+                #----
                 candidate = [int(ind) for ind in output.tolist()]
                 target = [int(ind) for ind in md.tolist()]
                 candidates.append(candidate)
@@ -86,82 +105,6 @@ class CNN2RNNTesterOnDatasetBase:
         
         metric_results = {}
         for metric_name, metric in self.metrics_with_name.items():
-            self.printer(f'x--- {metric_name} ---x')
-            metric.set_references(mds)
-            result = metric(candidates)
-            self.printer(str(result))
-            metric_results[metric_name] = result
-        self.printer('')
-        return metric_results, candidates, mds
-
-class CNN2RNNTesterOnDataset(CNN2RNNTesterOnDatasetBase):
-    model: "CNN2RNN"
-
-    def generate_one_markdown(self, src, features):
-        return self.model.generate_one_markdown(
-                src,
-                self.sos_ind, self.eos_ind,
-                sequence_max_length=25,
-                device=self.device,
-            )
-
-class CNN2RNNFeaturesTesterOnDataset(CNN2RNNTesterOnDatasetBase):
-    model: "CNN2RNNFeatures"
-
-    def generate_one_markdown(self, src, features):
-        return self.model.generate_one_markdown(
-                src, features,
-                self.sos_ind, self.eos_ind,
-                sequence_max_length=25,
-                device=self.device,
-            )
-
-    def start_testing(
-            self,
-            metrics_with_name: Dict[str, MetricInterface],
-            dataset_id_generator: Callable,
-            sos_ind: int, eos_ind: int,
-            device: torch.device,
-            example_ratio : typing.Union[float, None] = None,
-    ):
-        self.printer(f'x---------- {self.name} Started Testing ----------x')
-        self.model.eval()
-        examples_shown = 0
-        with torch.no_grad():
-            candidates = []
-            mds = []
-            for i in dataset_id_generator():
-                src, features, md = self.dataset[i]
-                src = self.__pad_to_length(src.unsqueeze(1).to(device))
-                features = features.unsqueeze(0).to(device)
-                if self.send_features:
-                    model: 'CNN2RNNFeatures' = self.model
-                    output = model.generate_one_markdown(
-                        src, features,
-                        sos_ind, eos_ind,
-                        sequence_max_length=25,
-                        device=device,
-                    )
-                else:
-                    model: typing.Union['CNN2RNN', 'CNN2RNNAttention'] = self.model
-                    output = model.generate_one_markdown(
-                        src,
-                        sos_ind, eos_ind,
-                        sequence_max_length=25,
-                        device=device,
-                    )
-                candidate = [int(ind) for ind in output.tolist()]
-                target = [int(ind) for ind in md.tolist()]
-                candidates.append(candidate)
-                mds.append([target])
-                if example_ratio is not None and random.random() < example_ratio:
-                    examples_shown += 1
-                    self.printer(f'x- example {examples_shown} -x')
-                    self.printer('\tReal: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in target]))
-                    self.printer('\tPredicted: ' + ' '.join([self.md_vocab.get_itos()[tok_ind] for tok_ind in candidate]))
-        
-        metric_results = {}
-        for metric_name, metric in metrics_with_name.items():
             self.printer(f'x--- {metric_name} ---x')
             metric.set_references(mds)
             result = metric(candidates)
