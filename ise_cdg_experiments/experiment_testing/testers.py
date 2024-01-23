@@ -20,7 +20,7 @@ if typing.TYPE_CHECKING:
 
 
 
-class CNN2RNNTesterOnDatasetBase:
+class CNN2RNNTesterOnDataset:
 
     def __init__(
             self, 
