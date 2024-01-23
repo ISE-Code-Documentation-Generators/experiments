@@ -7,7 +7,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
-VERSION = "0.0.0.3.3"
+VERSION = "0.0.0.3.2"
 DESCRIPTION = "To be added in the future"
 
 
@@ -22,7 +22,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=[
-        "ise_cdg_models @ git+https://github.com/ISE-Code-Documentation-Generators/models.git",
+        "ise_cdg_models @ git+https://github.com/ISE-Code-Documentation-Generators/models.git@feat/data-parallel",
         "ise_cdg_data @ git+https://github.com/ISE-Code-Documentation-Generators/data.git",
         "ise_cdg_utility @ git+https://github.com/ISE-Code-Documentation-Generators/utility.git",
     ],
