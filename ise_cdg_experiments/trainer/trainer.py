@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 import torch
 from torch import nn
 from tqdm import tqdm
+from .early_stop_detector import EarlyStopDetector
 from ise_cdg_utility import to_device
 from ise_cdg_utility.metrics import CodeMetric
 
@@ -17,13 +18,11 @@ class Trainer:
         proposed_optimizer, # TODO: type?
         proposed_criterion, # TODO: type?
         proposed_checkpoint, # TODO: type?
-        proposed_esd, # TODO: type?
         proposed_evaluation_tester, # TODO: type?
         baseline_model: "torch.nn.Module",
         baseline_optimizer, # TODO: type?
         baseline_criterion, # TODO: type?
         baseline_checkpoint, # TODO: type?
-        baseline_esd, # TODO: type?
         baseline_evaluation_tester, # TODO: type?
         data_loader: "DataLoader",
         device: "torch.device",
@@ -36,14 +35,12 @@ class Trainer:
         self.baseline_optimizer = baseline_optimizer
         self.baseline_criterion = baseline_criterion
         self.baseline_checkpoint = baseline_checkpoint
-        self.baseline_esd = baseline_esd
         self.baseline_evaluation_tester = baseline_evaluation_tester
 
         self.proposed_model = proposed_model
         self.proposed_optimizer = proposed_optimizer
         self.proposed_criterion = proposed_criterion
         self.proposed_checkpoint = proposed_checkpoint
-        self.proposed_esd = proposed_esd
         self.proposed_evaluation_tester = proposed_evaluation_tester
         
         self.data_loader = data_loader
@@ -53,6 +50,8 @@ class Trainer:
         self.plotter = Plotter()
 
     def train(self):
+        baseline_esd = EarlyStopDetector(self.baseline_model)
+        proposed_esd = EarlyStopDetector(self.proposed_model)
         baseline_loss, proposed_lost = None, None
         baseline_stop = False
         proposed_stop = False
@@ -104,7 +103,7 @@ class Trainer:
                 if not baseline_stop:
                     baseline_metrics, _, _ = self.baseline_evaluation_tester.start_testing()
                     #                 print(baseline_metrics)
-                    baseline_stop = self.baseline_esd.should_stop(
+                    baseline_stop = baseline_esd.should_stop(
                         baseline_metrics[CodeMetric.BLEU]
                     )
                     for k, v in baseline_metrics[CodeMetric.BLEU].items():
@@ -113,7 +112,7 @@ class Trainer:
                         print("Baseline Early Stopped!")
                 if not proposed_stop:
                     proposed_metrics, _, _ = self.proposed_evaluation_tester.start_testing()
-                    proposed_stop = self.proposed_esd.should_stop(
+                    proposed_stop = proposed_esd.should_stop(
                         proposed_metrics[CodeMetric.BLEU]
                     )
                     for k, v in proposed_metrics[CodeMetric.BLEU].items():
