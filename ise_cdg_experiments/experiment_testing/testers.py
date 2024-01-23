@@ -24,15 +24,15 @@ class CNN2RNNTesterOnDataset:
 
     def __init__(
             self, 
-            name: str,
-            model: torch.Module,
-            send_features_to_model: bool,
-            with_features_dataset: Md4DefDatasetInterface,
+            name: "str",
+            model: "torch.Module",
+            send_features_to_model: "bool",
+            with_features_dataset: "Md4DefDatasetInterface",
             md_vocab,
             source_max_length,
-            sos_ind: int, eos_ind: int,
-            device: torch.device,
-            example_ratio : typing.Union[float, None] = None,
+            sos_ind: "int", eos_ind: "int",
+            device: "torch.device",
+            example_ratio : "typing.Union[float, None]" = None,
             printer = print,
     ) -> None:
         self.name = name
