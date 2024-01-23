@@ -2,6 +2,8 @@ import torch
 from torch import optim
 from torch import nn
 
+from ise_cdg_utility.checkpoint import get_model_checkpoint
+
 
 class ModelLearningSpecs:
     def __init__(self, model, learning_rate, md_vocab) -> None:
@@ -23,5 +25,7 @@ class ModelLearningSpecs:
         self.optimizer.step()
         return loss
 
-    def get_model(self):
-        return self.model
+    def get_checkpoint(self, workspace: "str", *args, **kwargs):
+        return get_model_checkpoint(
+            workspace, self.model, self.optimizer, *args, **kwargs
+        )
