@@ -80,16 +80,16 @@ class CNN2RNNTesterOnDataset:
                 #----
                 if self.send_features:
                     model: 'CNN2RNNFeatures' = self.model
-                    output = model.generate_one_markdown(
-                        src, features,
+                    output = model(
+                        True, src, features,
                         self.sos_ind, self.eos_ind,
                         sequence_max_length=self.source_max_length,
                         device=self.device,
                     )
                 else:
                     model: typing.Union['CNN2RNN', 'CNN2RNNAttention'] = self.model
-                    output = model.generate_one_markdown(
-                        src,
+                    output = model(
+                        True, src,
                         self.sos_ind, self.eos_ind,
                         sequence_max_length=self.source_max_length,
                         device=self.device,
