@@ -15,7 +15,9 @@ class ModelLearningSpecs:
 
     def train_one_batch(self, inputs, expected_md) -> "torch.Tensor":
         md_for_criterion = expected_md[1:].reshape(-1)
-        output = self.model(torch.Tensor([[False]]), *inputs)
+        batch_size = inputs[0].shape[1]
+        one_markdown = torch.zeros(1, batch_size)
+        output = self.model(one_markdown, *inputs)
         output = output[1:].reshape(-1, output.shape[2])
 
         self.optimizer.zero_grad()
