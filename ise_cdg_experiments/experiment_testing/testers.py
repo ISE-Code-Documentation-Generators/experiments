@@ -83,16 +83,16 @@ class CNN2RNNTesterOnDataset:
                     output = model(
                         True, src, features,
                         self.sos_ind, self.eos_ind,
-                        sequence_max_length=self.source_max_length,
-                        device=self.device,
+                        self.source_max_length,
+                        self.device,
                     )
                 else:
-                    model: typing.Union['CNN2RNN', 'CNN2RNNAttention'] = self.model
+                    model: 'CNN2RNN' = self.model
                     output = model(
                         True, src,
                         self.sos_ind, self.eos_ind,
-                        sequence_max_length=self.source_max_length,
-                        device=self.device,
+                        self.source_max_length,
+                        self.device,
                     )
                 #----
                 candidate = [int(ind) for ind in output.tolist()]
