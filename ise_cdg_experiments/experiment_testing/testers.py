@@ -80,7 +80,7 @@ class CNN2RNNTesterOnDataset:
                 #----
                 if self.send_features:
                     model: 'CNN2RNNFeatures' = self.model
-                    output = model(
+                    output = model.generate_one_markdown(
                         src, features,
                         self.sos_ind, self.eos_ind,
                         self.source_max_length,
@@ -88,7 +88,7 @@ class CNN2RNNTesterOnDataset:
                     )
                 else:
                     model: 'CNN2RNN' = self.model
-                    output = model(
+                    output = model.generate_one_markdown(
                         src,
                         self.sos_ind, self.eos_ind,
                         self.source_max_length,
