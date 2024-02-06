@@ -60,14 +60,14 @@ class CNN2RNNBaseEvaluator(BaseModelTrainEvaluator, abc.ABC):
         sos_ind: "int",
         eos_ind: "int",
         example_ratio: typing.Union[float, None] = None,
-        printer_name: str = "N/A",
+        printer_name: str = "",
         printer=print,
         visitors: Optional[List[ExperimentVisitorInterface]] = None,
     ) -> None:
         super().__init__(model, device)
         self.dataset = dataset
         self.md_vocab = md_vocab
-        self.printer_name = printer_name
+        self.printer_name = printer_name or self.__class__.__name__
         self.printer = printer
         self.source_max_length = source_max_length
         self.metrics_with_name = get_vectorized_metrics(self.md_vocab)

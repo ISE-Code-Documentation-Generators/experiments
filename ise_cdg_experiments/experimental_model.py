@@ -1,12 +1,14 @@
 import typing
 from typing import Any, Optional
 
+from torch import optim
 
 from ise_cdg_utility.checkpoint import CheckpointInterface
 
 from ise_cdg_experiments.interfaces import (
     ExperimentalBatchInterface,
     ExperimentalModelInterface,
+    ExperimentalOptimizer,
     ModelTrainEvaluatorInterface,
 )
 
@@ -16,6 +18,7 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
     def __init__(
         self,
         model: typing.Any,
+        optimizer: optim.Optimizer,
         checkpoint: CheckpointInterface,
         batch_holder: ExperimentalBatchInterface,
         evaluator: Optional[ModelTrainEvaluatorInterface] = None,
@@ -25,6 +28,7 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
         self.checkpoint = checkpoint
         self.evaluator = evaluator
         self.batch_holder = batch_holder
+        self.optimizer = optimizer
 
     def train(self, *args: Any, **kwargs: Any):
         return self.model.train(*args, **kwargs)
@@ -50,3 +54,6 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
     def get_batch_holder(self, batch: typing.Any):
         self.batch_holder(batch)
         return self.batch_holder
+    
+    def optimize(self) -> ExperimentalOptimizer:
+        return ExperimentalOptimizer(self)

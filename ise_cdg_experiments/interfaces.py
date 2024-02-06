@@ -8,7 +8,24 @@ from torch import optim, nn
 from ise_cdg_experiments.experiment import BaseExperiment
 
 
+class ExperimentalOptimizer:
+
+    def __init__(self, experimental_model: "ExperimentalModelInterface") -> None:
+        self.experimental_model = experimental_model
+
+    def __enter__(self):
+        return self.experimental_model.optimizer.zero_grad()
+        # You can return an object that will be assigned to the variable after 'as'
+        return None
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.experimental_model.optimizer.step()
+        # Return True to suppress the exception, or False to propagate it
+        return False
+
+
 class ExperimentalModelInterface(ABC):
+    optimizer: optim.Optimizer
 
     @abstractmethod
     def train(self) -> None:
@@ -30,6 +47,10 @@ class ExperimentalModelInterface(ABC):
     def get_batch_holder(self, batch: typing.Any):
         pass
 
+    @abstractmethod
+    def optimize(self) -> ExperimentalOptimizer:
+        pass
+
 
 class ExperimentalBatchInterface(ABC):
     criterion_target: torch.Tensor
@@ -41,12 +62,13 @@ class ExperimentalBatchInterface(ABC):
 
 
 class BatchTrainerInterface(ABC):
-    optimizer: optim.Optimizer
     criterion: nn.Module
 
     @abstractmethod
     def train_one_batch(
-        self, model: typing.Any, batch_holder: ExperimentalBatchInterface
+        self,
+        model: ExperimentalModelInterface,
+        batch_holder: ExperimentalBatchInterface,
     ):
         pass
 
