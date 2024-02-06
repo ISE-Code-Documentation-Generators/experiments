@@ -5,7 +5,8 @@ from typing import Any, List
 import torch
 from torch import optim, nn
 
-from ise_cdg_experiments.experiment import BaseExperiment
+if typing.TYPE_CHECKING:
+    from ise_cdg_experiments.experiment import BaseExperiment
 
 
 class ExperimentalOptimizer:
@@ -48,7 +49,7 @@ class ExperimentalModelInterface(ABC):
         pass
 
     @abstractmethod
-    def optimize(self) -> ExperimentalOptimizer:
+    def optimize(self) -> "ExperimentalOptimizer":
         pass
 
 
@@ -67,8 +68,8 @@ class BatchTrainerInterface(ABC):
     @abstractmethod
     def train_one_batch(
         self,
-        model: ExperimentalModelInterface,
-        batch_holder: ExperimentalBatchInterface,
+        model: "ExperimentalModelInterface",
+        batch_holder: "ExperimentalBatchInterface",
     ):
         pass
 
@@ -89,9 +90,9 @@ class ModelTrainEvaluatorInterface(ABC):
 class ExperimentVisitorInterface(ABC):
 
     @abstractmethod
-    def visit_experiment(self, experiment: BaseExperiment):
+    def visit_experiment(self, experiment: "BaseExperiment"):
         pass
 
     @abstractmethod
-    def visit_evaluator(self, evaluator: ModelTrainEvaluatorInterface):
+    def visit_evaluator(self, evaluator: "ModelTrainEvaluatorInterface"):
         pass

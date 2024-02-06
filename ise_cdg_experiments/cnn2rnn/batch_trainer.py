@@ -1,11 +1,10 @@
-import typing
+from torch import nn
+
 from ise_cdg_experiments.interfaces import (
     BatchTrainerInterface,
     ExperimentalBatchInterface,
     ExperimentalModelInterface,
 )
-from torch import optim
-from torch import nn
 
 
 class CNN2RNNBatchTrainer(BatchTrainerInterface):
