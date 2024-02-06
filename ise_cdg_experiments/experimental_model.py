@@ -1,24 +1,30 @@
 import typing
-from typing import Any
+from typing import Any, Optional
 
 
 from ise_cdg_utility.checkpoint import CheckpointInterface
 
-from ise_cdg_experiments.interfaces import ExperimentalModelInterface
+from ise_cdg_experiments.interfaces import (
+    ExperimentalBatchInterface,
+    ExperimentalModelInterface,
+    ModelTrainEvaluatorInterface,
+)
 
 
 class ModelExperimentAdaptation(ExperimentalModelInterface):
 
     def __init__(
-        self, 
+        self,
         model: typing.Any,
-        checkpoint: CheckpointInterface, 
-        evaluator: typing.Any = None,
+        checkpoint: CheckpointInterface,
+        batch_holder: ExperimentalBatchInterface,
+        evaluator: Optional[ModelTrainEvaluatorInterface] = None,
     ) -> None:
         super().__init__()
         self.model = model
         self.checkpoint = checkpoint
         self.evaluator = evaluator
+        self.batch_holder = batch_holder
 
     def train(self, *args: Any, **kwargs: Any):
         return self.model.train(*args, **kwargs)
@@ -28,7 +34,7 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
 
     def generate_one_markdown(self, *args: Any, **kwargs: Any) -> Any:
         return self.model.generate_one_markdown(*args, **kwargs)
-    
+
     def save_checkpoint(self):
         if self.evaluator and self.evaluator.valid_for_save():
             self.checkpoint.save_checkpoint()
@@ -40,3 +46,7 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
             if not remain_silent:
                 raise e
             print("No file for checkpoint found on the directory!")
+
+    def get_batch_holder(self, batch: typing.Any):
+        self.batch_holder(batch)
+        return self.batch_holder

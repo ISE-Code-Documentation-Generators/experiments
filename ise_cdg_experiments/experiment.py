@@ -5,8 +5,11 @@ from torch import device as Device
 from torch.utils.data import DataLoader
 
 from tqdm import tqdm
-from ise_cdg_experiments.interfaces import BatchTrainerInterface, ExperimentalBatchInterface, ExperimentalModelInterface
-
+from ise_cdg_experiments.interfaces import (
+    BatchTrainerInterface,
+    ExperimentVisitorInterface,
+    ExperimentalModelInterface,
+)
 
 
 class BaseExperiment(ABC):
@@ -17,16 +20,17 @@ class BaseExperiment(ABC):
         device: Device,
         num_epochs: int,
         loader: DataLoader,
-        batch_holder: ExperimentalBatchInterface,
         trainer: BatchTrainerInterface,
+        visitors: typing.Optional[typing.List[ExperimentVisitorInterface]] = None,
     ) -> None:
         super().__init__()
         self.models = models
         self.device = device
         self.num_epochs = num_epochs
         self.loader = loader
-        self.batch_holder = batch_holder
         self.trainer = trainer
+        self._last_losses = None
+        self.visitors = visitors or []
 
     def get_models(self) -> typing.List[ExperimentalModelInterface]:
         return self.models
@@ -43,13 +47,11 @@ class BaseExperiment(ABC):
             each(lambda model: model.train(), models)
 
             for batch in tqdm(self.loader, desc="Training..."):
-                self.batch_holder(batch)
 
-                losses = each(
+                self._last_losses = each(
                     lambda model: self.trainer.train_one_batch(
                         model,
-                        self.batch_holder.criterion_target,
-                        self.batch_holder.forward_inputs,
+                        model.get_batch_holder(batch),
                     ),
                     models,
                 )
@@ -59,3 +61,7 @@ class BaseExperiment(ABC):
                     lambda model: model.save_checkpoint(),
                     models,
                 )
+
+    def accept_visitor(self, visitor: typing.List[ExperimentVisitorInterface]):
+        for v in visitor:
+            v.visit_experiment(self)
