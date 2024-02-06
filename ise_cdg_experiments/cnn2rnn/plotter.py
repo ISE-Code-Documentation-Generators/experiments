@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class CNN2RNNPlotter(ExperimentVisitorInterface):
     def __init__(self) -> None:
-        with open("resources/cnn2rnn/initial_plot.json", mode="r") as f:
+        with open("ise_cdg_experiments/resources/cnn2rnn/initial_plot.json", mode="r") as f:
             self.to_plot = json.load(f)
 
     def add_to_plot(self, item, *keys):
