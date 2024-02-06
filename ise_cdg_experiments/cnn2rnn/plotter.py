@@ -13,8 +13,30 @@ if TYPE_CHECKING:
 
 class CNN2RNNPlotter(ExperimentVisitorInterface):
     def __init__(self) -> None:
-        with open("ise_cdg_experiments/resources/cnn2rnn/initial_plot.json", mode="r") as f:
-            self.to_plot = json.load(f)
+        self.to_plot = {
+            "loss": {
+                "baseline": [],
+                "proposed": [],
+            },
+            "bleu_on_eval": {
+                "bleu_1": {
+                    "baseline": [],
+                    "proposed": [],
+                },
+                "bleu_2": {
+                    "baseline": [],
+                    "proposed": [],
+                },
+                "bleu_3": {
+                    "baseline": [],
+                    "proposed": [],
+                },
+                "bleu_4": {
+                    "baseline": [],
+                    "proposed": [],
+                },
+            },
+        }
 
     def add_to_plot(self, item, *keys):
         val = None
