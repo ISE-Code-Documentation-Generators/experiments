@@ -35,12 +35,10 @@ class BaseExperiment(ABC):
     def get_models(self) -> typing.List[ExperimentalModelInterface]:
         return self.models
 
-    @abstractmethod
     def should_save(self, epoch: int) -> bool:
-        pass
+        return epoch == self.num_epochs
 
     def train(self):
-        temp = 0
         models = self.get_models()
         for epoch in range(self.num_epochs):
             print(f"[Epoch {epoch + 1} / {self.num_epochs}]")
