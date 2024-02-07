@@ -17,13 +17,15 @@ class CNN2RNNBaseExperimentalBatch(ExperimentalBatchInterface, ABC):
     @property
     def criterion_target(self) -> torch.Tensor:
         assert (
-            self._criterion_target
+            self._criterion_target is not None
         ), "you should initially deploy a batch then use it."
         return self._criterion_target
 
     @property
     def forward_inputs(self) -> typing.Tuple:
-        assert self._forward_inputs, "you should initially deploy a batch then use it."
+        assert (
+            self._forward_inputs is not None
+        ), "you should initially deploy a batch then use it."
         return self._forward_inputs
 
     @abstractmethod
