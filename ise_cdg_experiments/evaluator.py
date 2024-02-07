@@ -11,7 +11,8 @@ from ise_cdg_experiments.interfaces import (
 class BaseModelTrainEvaluator(ModelTrainEvaluatorInterface, ABC):
 
     def __init__(self, model: Any, device: torch.device) -> None:
-        super().__init__()
+        self.model = model
+        self.device = device
 
     def accept_visitors(self, visitors: List["ExperimentVisitorInterface"]):
         for v in visitors:

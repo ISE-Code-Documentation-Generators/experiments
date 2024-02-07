@@ -11,4 +11,4 @@ from ise_cdg_experiments.interfaces import (
 class CNN2RNNExperiment(BaseExperiment):
 
     def should_save(self, epoch: int) -> bool:
-        return not ((epoch + 1) % 10)
+        return True or not ((epoch + 1) % 10)
