@@ -36,7 +36,7 @@ class BaseExperiment(ABC):
         return self.models
 
     def should_save(self, epoch: int) -> bool:
-        return epoch == self.num_epochs
+        return epoch + 1 == self.num_epochs
 
     def train(self):
         models = self.get_models()
