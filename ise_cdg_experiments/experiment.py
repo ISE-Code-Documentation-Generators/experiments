@@ -56,11 +56,9 @@ class BaseExperiment(ABC):
                     ),
                     models,
                 )
-                temp += 1
-                if temp % 5 == 0:
-                    temp = 0
-                    break
 
+            # After each epoch
+            self.accept_visitor(self.visitors)
             if self.should_save(epoch):
                 each(
                     lambda model: model.save_checkpoint(),

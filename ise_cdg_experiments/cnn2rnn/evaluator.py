@@ -140,7 +140,12 @@ class CNN2RNNBaseEvaluator(BaseModelTrainEvaluator, abc.ABC):
 
     def valid_for_save(self) -> bool:
         self._metrics, _, _ = self.evaluate()
+        self.accept_visitors(self.visitors)
         return not self.early_stop_detector.should_stop(self._metrics[CodeMetric.BLEU])
+
+    def accept_visitors(self, visitors: List[ExperimentVisitorInterface]):
+        for v in visitors:
+            v.visit_evaluator(self)
 
 
 class CNN2RNNEvaluator(CNN2RNNBaseEvaluator):

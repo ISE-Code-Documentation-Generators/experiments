@@ -41,7 +41,7 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
         return self.model.generate_one_markdown(*args, **kwargs)
 
     def save_checkpoint(self):
-        if True or (self.evaluator and self.evaluator.valid_for_save()):
+        if self.evaluator and self.evaluator.valid_for_save():
             self.checkpoint.save_checkpoint()
 
     def load_checkpoint(self, remain_silent: bool = True):

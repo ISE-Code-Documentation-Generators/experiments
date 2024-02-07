@@ -1,6 +1,5 @@
 import json
 from typing import TYPE_CHECKING
-from ise_cdg_experiments.experiment import BaseExperiment
 from ise_cdg_experiments.interfaces import (
     ExperimentVisitorInterface,
 )
@@ -9,6 +8,7 @@ from ise_cdg_utility.metrics import CodeMetric
 
 if TYPE_CHECKING:
     from .evaluator import CNN2RNNBaseEvaluator
+    from ise_cdg_experiments.experiment import BaseExperiment
 
 
 class CNN2RNNPlotter(ExperimentVisitorInterface):
@@ -51,12 +51,22 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
         return self.to_plot
 
     def visit_evaluator(self, evaluator: "CNN2RNNBaseEvaluator"):
+        if evaluator._metrics is None:
+            return
+
         from ise_cdg_experiments.cnn2rnn import CNN2RNNEvaluator
 
         model = "baseline" if isinstance(evaluator, CNN2RNNEvaluator) else "proposed"
         for k, v in evaluator._metrics[CodeMetric.BLEU].items():
             self.plotter.add_to_plot(float(v), "bleu_on_eval", k, model)
 
-    def visit_experiment(self, experiment: BaseExperiment):
+    def visit_experiment(self, experiment: "BaseExperiment"):
+        if experiment._last_losses is None:
+            return
+
         self.add_to_plot(experiment._last_losses[0], "loss", "baseline")
         self.add_to_plot(experiment._last_losses[1], "loss", "proposed")
+    
+    def save_result(self, filename):
+        with open(filename, "w") as outfile: 
+            json.dump(self.to_plot, outfile)

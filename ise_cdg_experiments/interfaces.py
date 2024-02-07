@@ -15,7 +15,8 @@ class ExperimentalOptimizer:
         self.experimental_model = experimental_model
 
     def __enter__(self):
-        return self.experimental_model.optimizer.zero_grad()
+        self.experimental_model.train()
+        self.experimental_model.optimizer.zero_grad()
         # You can return an object that will be assigned to the variable after 'as'
         return None
 
