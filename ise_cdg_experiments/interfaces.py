@@ -52,6 +52,10 @@ class ExperimentalModelInterface(ABC):
     def optimize(self) -> "ExperimentalOptimizer":
         pass
 
+    @abstractmethod
+    def parameters(self) -> torch.Tensor:
+        pass
+
 
 class ExperimentalBatchInterface(ABC):
     criterion_target: torch.Tensor

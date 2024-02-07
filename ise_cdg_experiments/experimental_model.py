@@ -4,6 +4,7 @@ from typing import Any, Optional
 from torch import optim
 
 from ise_cdg_utility.checkpoint import CheckpointInterface
+import torch
 
 from ise_cdg_experiments.interfaces import (
     ExperimentalBatchInterface,
@@ -57,3 +58,6 @@ class ModelExperimentAdaptation(ExperimentalModelInterface):
     
     def optimize(self) -> ExperimentalOptimizer:
         return ExperimentalOptimizer(self)
+    
+    def parameters(self) -> torch.Tensor:
+        return self.model.parameters()
