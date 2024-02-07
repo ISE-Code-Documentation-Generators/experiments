@@ -40,6 +40,7 @@ class BaseExperiment(ABC):
         pass
 
     def train(self):
+        temp = 0
         models = self.get_models()
         for epoch in range(self.num_epochs):
             print(f"[Epoch {epoch + 1} / {self.num_epochs}]")
@@ -55,6 +56,10 @@ class BaseExperiment(ABC):
                     ),
                     models,
                 )
+                temp += 1
+                if temp % 5 == 0:
+                    temp = 0
+                    break
 
             if self.should_save(epoch):
                 each(
