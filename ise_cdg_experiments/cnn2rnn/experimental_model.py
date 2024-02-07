@@ -14,6 +14,7 @@ class CNN2RNNExperimentalModel(ModelExperimentAdaptation):
         self._save_checkpoint_call = 0
 
     def save_checkpoint(self):
+        return True
         self._save_checkpoint_call += 1
         if not self._save_checkpoint_call % 2:
             return super().save_checkpoint()
