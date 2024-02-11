@@ -44,12 +44,8 @@ class BaseExperiment(ABC):
             print(f"[Epoch {epoch + 1} / {self.num_epochs}]")
 
             each(lambda model: model.train(), models)
-            temp = 0
 
             for batch in tqdm(self.loader, desc="Training..."):
-                temp += 1
-                if temp == 10:
-                    break
 
                 self._last_losses = each(
                     lambda model: self.trainer.train_one_batch(
