@@ -102,5 +102,10 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
         self.add_to_plot(experiment._last_losses[1], "loss", "proposed")
 
     def save_result(self, filename):
-        with open(filename, "w") as outfile:
-            json.dump(self.to_plot, outfile)
+        try:
+            with open(filename, "w") as outfile:
+                json.dump(self.to_plot, outfile)
+        except Exception as e:
+            print("Failed to save plotting result")
+            print("self.to_plot")
+            raise e
