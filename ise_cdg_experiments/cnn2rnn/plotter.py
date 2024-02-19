@@ -98,8 +98,8 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
         if experiment._last_losses is None:
             return
 
-        self.add_to_plot(experiment._last_losses[0], "loss", "baseline")
-        self.add_to_plot(experiment._last_losses[1], "loss", "proposed")
+        self.add_to_plot(float(experiment._last_losses[0]), "loss", "baseline")
+        self.add_to_plot(float(experiment._last_losses[1]), "loss", "proposed")
 
     def save_result(self, filename):
         try:
@@ -107,5 +107,5 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
                 json.dump(self.to_plot, outfile)
         except Exception as e:
             print("Failed to save plotting result")
-            print("self.to_plot")
+            print(self.to_plot)
             raise e
