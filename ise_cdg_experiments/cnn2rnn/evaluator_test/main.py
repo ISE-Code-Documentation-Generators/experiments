@@ -29,8 +29,7 @@ class EvaluatorTester(unittest.TestCase):
         return JSON_IO(results_dir="ise_cdg_experiments/cnn2rnn/evaluator_test")
 
     def test_metrics(self):
-        self.__evaluator_container.get_evaluator().valid_for_save()
-        metrics = self.__evaluator_container.get_plotter().to_plot
+        metrics = self.__evaluator_container.get_metrics()
         # self.__io.write(metrics, 'metrics.json')
         expected_metrics = self.__io.read("metrics.json")
         self.assertEqual(metrics, expected_metrics)

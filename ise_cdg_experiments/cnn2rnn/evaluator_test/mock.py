@@ -27,8 +27,12 @@ class SampleCNN2RNNFeaturesEvaluatorContainer:
         self.__test_plotter = test_plotter
         self.__proposed_tester = proposed_tester
 
-    def get_evaluator(self):
+    def __get_evaluator(self):
         return self.__proposed_tester
 
-    def get_plotter(self):
+    def __get_plotter(self):
         return self.__test_plotter
+    
+    def get_metrics(self):
+        self.__get_evaluator().valid_for_save()
+        return self.__get_plotter().to_plot
