@@ -54,6 +54,10 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
                     "proposed": [],
                 },
             },
+            "bert_on_eval": {
+                "baseline": [],
+                "proposed": [],
+            },
         }
 
     def add_to_plot(self, item, *keys):
@@ -93,6 +97,8 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
             self.add_to_plot(
                 self.__extract_rouge_metrics(evaluator, k), "rouge_on_eval", k, model
             )
+
+        self.add_to_plot(evaluator._metrics[CodeMetric.BERT]['bert_score'], "bert_on_eval", model)
 
     def visit_experiment(self, experiment: "BaseExperiment"):
         if experiment._last_losses is None:
