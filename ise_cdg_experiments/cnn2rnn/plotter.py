@@ -98,7 +98,11 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
                 self.__extract_rouge_metrics(evaluator, k), "rouge_on_eval", k, model
             )
 
-        self.add_to_plot(evaluator._metrics[CodeMetric.BERT]['bert_score'], "bert_on_eval", model)
+        self.add_to_plot(
+            float(evaluator._metrics[CodeMetric.BERT]["bert_score"]),
+            "bert_on_eval",
+            model,
+        )
 
     def visit_experiment(self, experiment: "BaseExperiment"):
         if experiment._last_losses is None:
