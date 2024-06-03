@@ -83,6 +83,18 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
             )
         return result
 
+    def __extract_bert_metrics(
+        self,
+        evaluator: "CNN2RNNBaseEvaluator",
+    ):
+        rouge_specifics = ["fmeasure", "precision", "recall"]
+        result = []
+        for specific in rouge_specifics:
+            result.append(
+                float(evaluator._metrics[CodeMetric.BERT][f"BERT_{specific}"])
+            )
+        return result
+
     def visit_evaluator(self, evaluator: "CNN2RNNBaseEvaluator"):
         if evaluator._metrics is None:
             return
@@ -99,7 +111,7 @@ class CNN2RNNPlotter(ExperimentVisitorInterface):
             )
 
         self.add_to_plot(
-            float(evaluator._metrics[CodeMetric.BERT]["bert_score"]),
+            self.__extract_bert_metrics(evaluator),
             "bert_on_eval",
             model,
         )
